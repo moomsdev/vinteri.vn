@@ -1,0 +1,333 @@
+@use "../utilities/variables.scss" as *;
+@use "../utilities/mixin.scss" as *;
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+  color-scheme: light;
+  border: none !important;
+}
+
+body {
+  font-family: $secondaryFont !important;
+  font-weight: $regular !important;
+  line-height: 1.5em !important;
+  color: $primaryColor !important;
+  background-color: $backgroundColor !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  scroll-behavior: smooth;
+  @include resFont(1.6, 1.8, true);
+}
+
+::-webkit-scrollbar {
+  width: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 0 rgba(0, 0, 0, 0.5);
+  border-radius: 2rem;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 2rem;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+// animation for dark mode transition
+#darkmode {
+  position: fixed;
+  top: 2rem;
+  right: 3rem;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2em;
+  z-index: 2;
+  border: none;
+  
+  .btn-outline {
+    position: absolute;
+    width: 5rem;
+    height: 5rem;
+    border: 1px solid $primaryColor;
+  }
+  .btn-outline-1 {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    animation: morph 4s linear infinite;
+  }
+  .btn-outline-2 {
+    border-radius: 53% 47% 43% 58% / 51% 39% 61% 49%;
+  }
+}
+
+.darkmode-icon {
+  transform: scale(0.45);
+  cursor: pointer;
+  z-index: 10;
+
+  input {
+    display: none;
+
+    & + div {
+      border-radius: 50%;
+      width: 5rem;
+      height: 5rem;
+      position: relative;
+      box-shadow: inset 1.3rem -1.3rem 0 0 $primaryColor;
+      transform: scale(1) rotate(-2deg);
+      transition: box-shadow 0.5s ease 0s, transform 0.4s ease 0.1s;
+
+      &:before {
+        content: "";
+        width: inherit;
+        height: inherit;
+        border-radius: inherit;
+        position: absolute;
+        left: 0;
+        top: 0;
+        background: light-dark(transparent, $primaryColor);
+        transition: background 0.3s ease;
+      }
+
+      &:after {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin: -4px 0 0 -4px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        box-shadow: 0 -3rem 0 $primaryColor,
+          0 3rem 0 $primaryColor,
+          3rem 0 0 $primaryColor,
+          -3rem 0 0 $primaryColor,
+          2rem 2rem 0 $primaryColor,
+          -2rem 2rem 0 $primaryColor,
+          2rem -2rem 0 $primaryColor,
+          -2rem -2rem 0 $primaryColor;
+        transform: scale(0);
+        transition: all 0.3s ease;
+      }
+    }
+
+    &:checked + div {
+      box-shadow: inset 3.2rem -3.2rem 0 0 #fff;
+      transform: scale(0.5) rotate(0deg);
+      transition: transform 0.3s ease 0.1s, box-shadow 0.2s ease 0s;
+
+      &:before {
+        background: $primaryColor;
+        transition: background 0.3s ease 0.1s;
+        outline: none;
+      }
+
+      &:after {
+        transform: scale(1.5);
+        transition: transform 0.5s ease 0.15s;
+        outline: none;
+      }
+    }
+  }
+}
+
+::view-transition-new(html) {
+  animation: all 1.9s ease-in-out forwards;
+  z-index: 1;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(html) {
+  animation: all 1.9s ease-in-out forwards;
+  animation-delay: 1.9s;
+  z-index: 0;
+  mix-blend-mode: normal;
+}
+
+::view-transition-image-pair(html) {
+  isolation: isolate;
+}
+// end of dark mode transition
+
+h1::selection,
+h2::selection,
+h3::selection,
+h4::selection,
+h5::selection,
+h6::selection,
+a::selection,
+p::selection,
+span::selection,
+img::selection,
+label::selection,
+li::selection,
+button::selection,
+input::selection,
+bdi::selection {
+  color: $backgroundColor;
+  background-color: $primaryColor;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+ul,
+ol,
+li,
+figure,
+blockquote {
+  margin: 0;
+  padding: 0;
+}
+
+p {
+  margin-bottom: 2rem;
+}
+
+table {
+  width: 100%;
+  border: 0;
+  border-collapse: collapse;
+}
+
+img {
+  max-width: 100%;
+  transition: all 0.25s linear;
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none !important;
+
+  &:hover {
+    color: $primaryColor;
+  }
+}
+
+a,
+button,
+input,
+textarea {
+  outline: 0;
+  transition: {
+    duration: 0.25s;
+    property: background-color, border-color, color, box-shadow;
+  }
+}
+
+button {
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+p:empty {
+  display: none;
+}
+
+.container {
+  width: 100%;
+  max-width: $container-mw;
+  padding-right: 1.5rem;
+  padding-left: 1.5rem;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.container-fluid {
+  padding-right: 10rem;
+  padding-left: 10rem;
+
+  @include maxWidth($lg) {
+    padding-right: 5rem;
+    padding-left: 5rem;
+  }
+
+  @include maxWidth($md) {
+    padding-right: 2rem;
+    padding-left: 2rem;
+  }
+
+  @include maxWidth($sm) {
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
+  }
+}
+
+.full-width {
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  width: calc(100vw - 3px);
+}
+
+.no-gap-row {
+  margin-right: 0;
+  margin-left: 0;
+
+  > [class*='col-'] {
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
+
+
+// =============================================================================
+// ACCESSIBILITY: Focus Styles for Keyboard Navigation
+// =============================================================================
+
+// Global focus-visible styles
+*:focus-visible {
+  outline: 3px solid #2196f3;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+// Button focus styles
+button:focus-visible,
+.btn:focus-visible,
+a:focus-visible {
+  outline: 3px solid #2196f3;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.3);
+}
+
+// Skip link (already styled but ensure visibility)
+.skip-link {
+  &:focus {
+    clip: auto !important;
+    clip-path: none;
+    background-color: #2196f3;
+    color: white;
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    height: auto;
+    left: 5px;
+    line-height: normal;
+    padding: 15px 23px 14px;
+    text-decoration: none;
+    top: 5px;
+    width: auto;
+    z-index: 100000;
+  }
+}
+
+// =============================================================================
+// END ACCESSIBILITY STYLES
+// =============================================================================

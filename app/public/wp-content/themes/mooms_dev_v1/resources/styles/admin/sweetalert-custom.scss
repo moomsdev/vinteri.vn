@@ -1,0 +1,173 @@
+/**
+ * Custom SweetAlert2 Styles for Bulk Image Optimization
+ * Each popup has its own class for targeted styling
+ */
+
+/* ===== BULK OPTIMIZE PROGRESS ===== */
+.swal-bulk-optimize-progress {
+   
+}
+
+/* ===== BULK OPTIMIZE COMPLETE ===== */
+.swal-bulk-optimize-complete {
+    
+}
+
+/* ===== BULK OPTIMIZE ERROR ===== */
+.swal-bulk-optimize-error,
+.swal-bulk-optimize-ajax-error {
+    .swal2-popup {
+        background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+        color: white;
+        border-radius: 15px;
+        box-shadow: 0 20px 40px rgba(244,67,54,0.3);
+    }
+    
+    .swal2-title {
+        color: white;
+        font-weight: 600;
+    }
+    
+    .swal2-confirm {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.3);
+        
+        &:hover {
+            background: rgba(255,255,255,0.3);
+        }
+    }
+}
+
+/* ===== IMAGE SELECTOR ===== */
+.swal-image-selector {
+    width: 89% !important;
+    place-self: flex-end !important;
+    max-height: 100% !important;
+    height: 90vh !important;
+}
+
+/* ===== OPTIMIZE SELECTED PROGRESS ===== */
+.swal-optimize-selected-progress {
+    
+}
+
+/* ===== OPTIMIZE SELECTED COMPLETE ===== */
+.swal-optimize-selected-complete {
+    
+}
+
+/* ===== OPTIMIZE SELECTED ERROR ===== */
+.swal-optimize-selected-error,
+.swal-optimize-selected-ajax-error {
+    
+}
+
+/* ===== RESTORE CONFIRM ===== */
+.swal-restore-confirm {
+   
+}
+
+/* ===== RESTORE SUCCESS ===== */
+.swal-restore-success {
+    
+}
+
+/* ===== RESTORE ERROR ===== */
+.swal-restore-error,
+.swal-restore-ajax-error {
+    
+}
+
+/* ===== RESTORE SELECTED PROGRESS ===== */
+.swal-restore-selected-progress {
+    
+}
+
+/* ===== RESTORE SELECTED COMPLETE ===== */
+.swal-restore-selected-complete {
+  
+}
+
+/* ===== BULK RESTORE CONFIRM ===== */
+.swal-bulk-restore-confirm {
+    
+}
+
+/* ===== BULK RESTORE COMPLETE ===== */
+.swal-bulk-restore-complete {
+    
+}
+
+/* ===== BULK RESTORE ERROR ===== */
+.swal-bulk-restore-error,
+.swal-bulk-restore-ajax-error {
+   
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideInFromTop {
+    0% {
+        transform: translateY(-100px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Apply animations to all custom popups */
+.swal-bulk-optimize-progress,
+.swal-bulk-optimize-complete,
+.swal-bulk-optimize-error,
+.swal-bulk-optimize-ajax-error,
+.swal-image-selector,
+.swal-optimize-selected-progress,
+.swal-optimize-selected-complete,
+.swal-optimize-selected-error,
+.swal-optimize-selected-ajax-error,
+.swal-restore-confirm,
+.swal-restore-success,
+.swal-restore-error,
+.swal-restore-ajax-error,
+.swal-restore-selected-progress,
+.swal-restore-selected-complete,
+.swal-bulk-restore-confirm,
+.swal-bulk-restore-complete,
+.swal-bulk-restore-error,
+.swal-bulk-restore-ajax-error {
+    .swal2-popup {
+        animation: slideInFromTop 0.3s ease-out;
+    }
+    
+    .swal2-confirm {
+        animation: pulse 2s infinite;
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .swal-image-selector {
+        .swal2-popup {
+            max-width: 95%;
+            margin: 0 10px;
+        }
+        
+        #mms-images-grid {
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        }
+    }
+}

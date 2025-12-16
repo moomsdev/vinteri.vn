@@ -1,0 +1,190 @@
+@use "../utilities/variables.scss" as *;
+@use "../utilities/mixin.scss" as *;
+
+// Mixin containing all block styles
+// This allows reuse in both theme and editor contexts
+@mixin block-styles {
+  //common
+  h2.block-title {
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    font-weight: $medium;
+    color: $primaryColor;
+    @include resFont(1.8, 2.4);
+  }
+
+  .block-title-scroll {
+    font-weight: $thin;
+    font-style: italic;
+    text-transform: uppercase;
+    @include resFont(2, 8, true);
+  }
+
+  .block-desc {
+    text-align: justify;
+  }
+
+  section:not(.block-about) {
+    padding: 6rem 0;
+    position: relative;
+    overflow: hidden;
+
+    @include maxWidth($md) {
+      padding: 4rem 0;
+    }
+  }   
+
+  // Block WELCOME
+  .block-about {
+    margin: 4rem auto 0;
+    max-width: 92rem;
+
+    &__head {
+      margin: 0 auto;
+      padding: 1rem 1rem 2rem 1rem;
+      position: relative;
+      width: fit-content;
+      border-radius: 10rem;
+      overflow: hidden;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: $backgroundDark;
+      }
+    }
+
+    &__img {
+      margin: 0 auto;
+      margin-top: 8rem;
+      position: relative;
+
+      figure {
+        margin: 0 auto;
+        width: 13rem;
+        height: 13rem;
+
+        img {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          object-fit: cover;
+          object-position: center left;
+        }
+      }
+    }
+
+    &__body {
+      padding: 4rem 0;
+
+      .block-title {
+        font-style: italic;
+      }
+    }
+
+    .scroll-circle {
+      margin: 0 auto;
+      position: relative;
+      width: 14rem;
+      height: 14rem;
+
+      svg {
+        width: 100%;
+        height: 100%;
+        animation: rotateText 14s linear infinite;
+        min-height: clamp(10rem, 20vw, 14rem);
+        min-width: clamp(10rem, 20vw, 14rem);
+      }
+
+      text {
+        font-size: 1.5rem;
+        fill: $primaryColorDark;
+        text-transform: uppercase;
+      }
+
+      .arrow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        @include iconify-mask("guidance:down-arrow", 4rem, 4rem, $primaryColorDark);
+
+        @include maxWidth($sm) {
+          width: 3rem;
+          height: 3rem;
+        }
+      }
+    }
+
+    .welcome-text {
+      display: inline-flex;
+      align-items: center;
+      font-weight: $thin;
+      line-height: 1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      opacity: 0.3;
+      @include resFont(5, 13);
+    }
+
+    @keyframes rotateText {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(-360deg);
+      }
+    }
+  }
+
+  // Block Service
+  .block-service {
+    .block-desc {
+      margin: 0 auto;
+      max-width: 92rem;
+    }
+
+    &__list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    &__item {
+
+      .item__link {
+        padding: 6rem 3rem;
+        display: block;
+        border-radius: 1rem;
+        background-color: #fff;
+        text-align: center;
+        color: #010101;
+      }
+
+      .item__icon {
+        margin-bottom: 2rem;
+        display: block;
+        line-height: 1em;
+        font-weight: $bold;
+        @include resFont(2, 8);
+      }
+
+      .item__title {
+        margin-bottom: 2rem;
+        font-weight: $regular;
+        @include resFont(1.8, 2.4);
+      }
+
+      .item__desc {
+        text-align: justify;
+      }
+    }
+  }
+}
+
+// Apply block styles at root level for theme
+@include block-styles;

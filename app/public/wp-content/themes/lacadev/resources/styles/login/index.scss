@@ -1,0 +1,192 @@
+@use "../theme/utilities/_variables.scss" as *;
+
+html {
+  font-size: 62.5%;
+}
+
+body.login {
+  font: normal normal 400 1.6rem $secondaryFont;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to bottom right, #50a3a2 0%, #53e3a6 100%);
+
+  .language-switcher {
+    width: 100%;
+
+    label {
+      display: none;
+    }
+  }
+
+  #login {
+    margin: 0 auto;
+    padding: 20px !important;
+    width: 47rem;
+    max-width: 90%;
+
+    .welcome {
+      margin: 2.5rem auto;
+      font-size: clamp(2.5rem, 3vw, 3.7rem);
+      letter-spacing: 2px;
+      font-weight: 600;
+      color: #fff;
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 3px solid #fff;
+      width: 0;
+      animation: typing 3.5s steps(22, end) forwards,
+        blink-caret 0.75s step-end infinite alternate;
+    }
+
+    p,
+    a {
+      color: #fff;
+    }
+
+    h1 a {
+      width: 100%;
+      height: 15rem;
+      max-width: 47rem;
+      background-image: url("~@images/dev/moomsdev-white.png") !important;
+      background-size: contain;
+      background-position: center;
+      outline: none;
+    }
+
+    form#loginform {
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+
+      p,
+      .user-pass-wrap {
+        width: 100%;
+      }
+
+      p:nth-child(3) {
+        order: 4;
+      }
+
+      .user-pass-wrap label,
+      label[for="user_login"] {
+        display: none;
+      }
+
+      input#user_login::placeholder,
+      input#user_pass::placeholder {
+        color: #fff;
+      }
+
+      input#user_login,
+      input#user_pass {
+        padding: 10px 15px;
+        margin: 0 auto 10px auto;
+        display: block;
+        font: 300 18px;
+        text-align: center;
+        color: white;
+        outline: 0;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 2.5rem;
+        transition-duration: 0.25s;
+        appearance: none;
+
+        &:hover {
+          background-color: fade(white, 40%);
+        }
+
+        &:focus {
+          background-color: white;
+          color: #53e3a6;
+        }
+      }
+
+      button.wp-hide-pw {
+        color: #53e3a6;
+      }
+
+      p.forgetmenot {
+        padding: 1.2rem 0 0;
+
+        label {
+          font-size: 1.6rem;
+        }
+      }
+
+      p.submit input#wp-submit {
+        padding: 0.5rem 3rem;
+        width: 100%;
+        height: auto;
+        font-size: 1.6rem;
+        font-weight: 500;
+        background: #fff;
+        color: #53e3a6;
+        border: 1px solid white;
+        border-radius: 2.4rem;
+        text-transform: uppercase;
+        transition-duration: 0.25s;
+        opacity: 1;
+
+        &:hover {
+          opacity: 0.7;
+          border: 1px solid #00bfa5;
+        }
+
+        &:focus {
+          border: none;
+          outline: none;
+          box-shadow: none;
+        }
+      }
+    }
+
+    #nav,
+    #backtoblog {
+      margin: 0;
+      padding: 1.2rem 0 0;
+
+      a {
+        font-size: 1.6rem;
+        color: #fff;
+        transition: all 0.25s linear;
+
+        &:hover {
+          color: #424242;
+        }
+      }
+    }
+
+    @keyframes typing {
+      from {
+        width: 0;
+      }
+
+      to {
+        width: 100%;
+      }
+    }
+
+    @keyframes blink-caret {
+      from,
+      to {
+        border-color: transparent;
+      }
+
+      50% {
+        border-color: #fff;
+      }
+    }
+  }
+
+  .button.wp-hide-pw:focus {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+}

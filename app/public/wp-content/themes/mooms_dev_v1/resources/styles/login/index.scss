@@ -1,0 +1,284 @@
+@use "../theme/utilities/_variables.scss" as *;
+@use "../theme/utilities/_mixin.scss" as *;
+
+html {
+  font-size: 62.5%;
+}
+
+body.login {
+  font: normal normal 400 1.6rem $primaryFont;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to bottom right, #50a3a2 0%, #53e3a6 100%);
+
+  .language-switcher {
+    display: none;
+    width: 100%;
+
+    label {
+      display: none;
+    }
+  }
+
+  #login {
+    margin: 0 auto;
+    padding: 20px !important;
+    width: 100%;
+    max-width: 50rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    .welcome {
+      margin: 2.5rem auto;
+      width: 0;
+      text-align: center;
+      font-weight: 500;
+      color: #fff;
+      letter-spacing: 2px;
+      border-right: 3px solid #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: typing-loop 8.6s steps(22, end) infinite, blink-caret 0.75s step-end infinite alternate;
+
+      @include resFont(2.5, 3.8, true);
+    }
+
+    @keyframes typing-loop {
+      0% {
+        width: 0;
+      }
+      40.7% {
+        width: 100%;
+      }
+      98.8% {
+        width: 100%;
+      }
+      100% {
+        width: 0;
+      }
+    }
+
+    @keyframes blink-caret {
+      from,
+      to {
+        border-color: transparent;
+      }
+
+      50% {
+        border-color: #fff;
+      }
+    }
+
+    p,
+    a {
+      color: #fff;
+    }
+
+    h1{
+      width: 100%;
+
+      a {
+        width: 100%;
+        height: 100px;
+        background-image: var(--login-logo-url, url("../../images/dev/moomsdev-white.png")) !important;
+        background-size: contain;
+        background-position: center;
+        outline: none;
+      }
+    } 
+
+    form#loginform {
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+
+      p,
+      .user-pass-wrap {
+        width: 100%;
+      }
+
+      p:nth-child(3) {
+        order: 4;
+      }
+
+      .user-pass-wrap label,
+      label[for="user_login"] {
+        display: none;
+      }
+
+      input#user_login::placeholder,
+      input#user_pass::placeholder {
+        color: #fff;
+      }
+
+      input#user_login,
+      input#user_pass {
+        display: block;
+        appearance: none;
+        outline: 0;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        background-color: rgba(255, 255, 255, 0.2);
+
+        border-radius: 2.5rem;
+        padding: 10px 15px;
+        margin: 0 auto 10px auto;
+        display: block;
+        text-align: center;
+        font-size: 18px;
+        color: white;
+
+        transition-duration: 0.25s;
+        font: normal normal 400 1.6rem $primaryFont !important;
+        font-weight: 300;
+
+        &:hover {
+          background-color: fade(white, 40%);
+        }
+
+        &:focus {
+          background-color: white;
+          color: #53e3a6;
+
+          + button.wp-hide-pw {
+            color: #53e3a6;
+          }
+        }
+      }
+
+      button.wp-hide-pw {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        color: #fff;
+
+        .dashicons {
+          width: 2rem;
+          height: 2rem;
+          top: 0;
+        }
+      }
+
+      p.forgetmenot {
+        padding: 1.2rem 0 0;
+
+        label {
+          font-size: 1.6rem;
+        }
+      }
+
+      p.submit input#wp-submit {
+        padding: 1rem 1.5rem;
+        width: 100%;
+        height: auto;
+        font: normal normal 400 1.6rem $primaryFont !important;
+        font-size: 1.6rem;
+        font-weight: 500;
+        background: #fff;
+        color: #53e3a6;
+        border: 1px solid white;
+        border-radius: 2.4rem;
+        transition-duration: 0.25s;
+        opacity: 1;
+
+        &:hover {
+          opacity: 0.7;
+          border: 1px solid #00bfa5;
+        }
+
+        &:focus {
+          border: none;
+          outline: none;
+          box-shadow: none;
+        }
+      }
+    }
+
+    #nav,
+    #backtoblog {
+      margin: 0;
+      padding: 1.2rem 0 0;
+
+      a {
+        font-size: 1.6rem;
+        color: #fff;
+        transition: all 0.25s linear;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  .button.wp-hide-pw:focus {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  .google-login-container {
+    margin: 0 auto;
+  }
+  
+  .google-login-divider {
+    margin: 0 0 10px;
+    position: relative;
+    text-align: center;
+
+    span {
+      background: transparent;
+      color: #fff;
+      text-transform: uppercase;
+      font-size: 1.6rem;
+    }
+
+    &::before {
+      content: none;
+    }
+  }
+
+  .google-login-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: #fff;
+    border: 1px solid #dadce0;
+    color: #3c4043;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    border-radius: 2.5rem;
+    font: normal normal 400 1.6rem $primaryFont !important;
+
+    &:hover {
+      background: #f8f9fa;
+      border-color: #dadce0;
+      opacity: 0.7;
+    }
+
+    &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.3);
+    }
+
+    svg {
+      flex-shrink: 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .google-login-btn {
+      font-size: 13px;
+      padding: 10px 14px;
+    }
+  }
+}

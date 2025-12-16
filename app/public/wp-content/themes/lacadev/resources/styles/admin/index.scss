@@ -1,0 +1,97 @@
+// Custom Post Order
+@use "post-order";
+
+html:where(.wp-block) {
+  max-width: 120rem;
+  position: relative;
+  overflow: hidden;
+}
+
+body.wp-admin {
+  font-size: 13px !important;
+}
+
+.featured_image.column-featured_image {
+  a:not(.remove-thumbnail) {
+    display: block !important;
+    background-color: #fff;
+  }
+
+  a.remove-thumbnail {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    width: 13px;
+    height: 13px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f15d4f;
+    color: #fff;
+    border-radius: 50%;
+    border: 1px solid #f15d4f;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: #fff;
+      color: #f15d4f;
+    }
+
+    svg {
+      width: 50%;
+      height: 50%;
+    }
+  }
+
+  img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+  .no-image-text {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    border: 1px dashed;
+    aspect-ratio: 16 / 10;
+  }
+}
+
+.subsubsub {
+  z-index: 9999;
+  position: relative;
+}
+
+input[name="carbon_fields_compact_input[_smtp_password]"] {
+  max-width: 85%;
+  display: inline-block;
+}
+
+button[data-toggle="password-toggle"] {
+  padding: 2px 2rem;
+  min-width: 12%;
+  display: inline-block;
+  font-weight: 600;
+  line-height: 2;
+  text-transform: uppercase;
+  color: #fff;
+  background: #1d2327;
+  border: 1px solid;
+  border-radius: 4px;
+}
+
+#wp-auth-check-wrap #wp-auth-check {
+  padding: 0 !important;
+  width: 80% !important;
+}
+
+#wp-auth-check-wrap .wp-auth-check-close {
+  color: #fff !important;
+  z-index: 99;
+}
+
+.metabox-holder-disabled .accordion-section-content,
+.metabox-holder-disabled .accordion-section-title,
+.metabox-holder-disabled .postbox {
+  opacity: 1 !important;
+}

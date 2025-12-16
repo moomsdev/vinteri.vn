@@ -1,0 +1,28 @@
+.loop-post {
+  img {
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    object-position: center;
+  }
+    
+  .img {
+    position: relative;
+    overflow: hidden;
+
+    .date {
+      position: absolute;
+      font-size: 1.3rem;
+      font-weight: 600;
+      width: max-content;
+      right: 0;
+      bottom: 0px;
+      color: #fff;
+      background: rgba(70, 70, 70, .96);
+      padding: 5px 20px;
+    }
+  }
+
+  h3 {
+    margin-top: 2rem;
+  }
+}

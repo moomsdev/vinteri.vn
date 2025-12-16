@@ -1,0 +1,48 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "lacadev/about-block",
+  "title": "About Me",
+  "description": "Block giới thiệu về tôi",
+  "category": "lacadev-blocks",
+  "icon": "admin-users",
+  "example": {
+    "attributes": {
+      "welcomeContent": "about me - about me - about me -",
+      "aboutTitle": "Tiêu đề",
+      "aboutDesc": "<p>Nội dung giới thiệu về bản thân...</p>"
+    }
+  },
+  "keywords": ["about", "giới thiệu", "profile"],
+  "textdomain": "laca",
+  "attributes": {
+    "blockID": {
+      "type": "string",
+      "default": ""
+    },
+    "welcomeContent": {
+      "type": "string",
+      "default": "about me - about me - about me - about me - about me -"
+    },
+    "aboutImage": {
+      "type": "object",
+      "default": {
+        "id": 0,
+        "url": "/wp-content/themes/lacadev/resources/images/default-img.webp",
+        "alt": "Default image"
+      }
+    },
+    "aboutTitle": {
+      "type": "string",
+      "default": ""
+    },
+    "aboutDesc": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "supports": {
+    "html": false,
+    "align": false
+  }
+}

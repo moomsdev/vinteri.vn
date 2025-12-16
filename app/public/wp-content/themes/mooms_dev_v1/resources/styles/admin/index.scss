@@ -1,0 +1,477 @@
+// @import "../theme/utilities/_variables.scss";
+// @import "../theme/utilities/_mixin.scss";
+// @import "../theme/blocks/**.scss";
+// @import "../theme/layout/_general.scss";
+// @import "../shared/introjs.css";
+@import 'sweetalert-custom';
+
+html :where(.wp-block) {
+    max-width: 120rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.featured_image.column-featured_image {
+    a {
+        display: block;
+    }
+    img {
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+    }
+    .no-image-text {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        border: 1px dashed;
+        aspect-ratio: 16 / 10;
+    }
+}
+
+// Pages list table thumbnail (same style)
+.column-featured_image {
+    a {
+        display: block;
+    }
+    img {
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+    }
+    .no-image-text {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        border: 1px dashed;
+        aspect-ratio: 16 / 10;
+    }
+}
+
+.banner-block {
+    height: auto !important;
+}
+
+.subsubsub {
+    z-index: 9999;
+    position: relative;
+}
+
+input[name="carbon_fields_compact_input[_smtp_password]"],
+input[name="carbon_fields_compact_input[_google_client_secret]"] {
+    max-width: calc(100% - 5.5rem);
+    display: inline-block;
+}
+
+button[data-toggle="password-toggle"] {
+    padding: 2px 1rem;
+    width: 100%;
+    max-width: 5rem;
+    display: inline-block;
+    font-weight: 600;
+    line-height: 2;
+    text-transform: uppercase;
+    color: #fff;
+    background: #1d2327;
+    border: 1px solid;
+    border-radius: 4px;
+}
+
+#wp-auth-check-wrap #wp-auth-check {
+    padding: 0 !important;
+    width: 80% !important;
+}
+
+#wp-auth-check-wrap .wp-auth-check-close {
+    color: #fff !important;
+    z-index: 99;
+}
+
+// ==========================================================================
+// Dashboard Widgets
+// ==========================================================================
+
+.mms-dashboard-stats {
+    padding: 0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-item {
+    text-align: left;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stat-number {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0073aa;
+    margin-bottom: 5px;
+}
+
+.stats-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.stats-actions .button {
+    margin: 0;
+}
+
+.stat-list {
+    text-align: left;
+    font-size: 12px;
+    color: #666;
+    letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   Recent Activity Widget
+   ========================================================================== */
+
+.mms-recent-activity {
+    padding: 0;
+}
+
+.activity-section {
+    margin-bottom: 20px;
+}
+
+.activity-section:last-child {
+    margin-bottom: 0;
+}
+
+.activity-section h4 {
+    margin: 0 0 10px 0;
+    padding: 8px 12px;
+    background: #f1f1f1;
+    border-left: 4px solid #0073aa;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.activity-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.activity-list li {
+    padding: 8px 12px;
+    border-bottom: 1px solid #f0f0f1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.activity-list li:last-child {
+    border-bottom: none;
+}
+
+.activity-list a {
+    color: #0073aa;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.activity-list a:hover {
+    color: #005177;
+    text-decoration: underline;
+}
+
+.activity-date {
+    font-size: 11px;
+    color: #666;
+    font-style: italic;
+}
+
+/* ==========================================================================
+   Quick Actions Widget
+   ========================================================================== */
+
+.mms-quick-actions {
+    padding: 0;
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+}
+
+.action-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 10px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #333;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.action-item:hover {
+    background: #0073aa;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 115, 170, 0.3);
+}
+
+.action-item .dashicons {
+    font-size: 24px;
+    margin-bottom: 8px;
+    width: 24px;
+    height: 24px;
+}
+
+.action-item span:not(.dashicons) {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+/* ==========================================================================
+   System Health Widget
+   ========================================================================== */
+
+.mms-system-health {
+    padding: 0;
+}
+
+.health-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.health-item:last-child {
+    border-bottom: none;
+}
+
+.health-label {
+    font-weight: 500;
+    color: #333;
+}
+
+.health-value {
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.health-value.good {
+    background: #d4edda;
+    color: #155724;
+}
+
+.health-value.warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.health-value.error {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .action-item {
+        padding: 12px 8px;
+    }
+    
+    .action-item .dashicons {
+        font-size: 20px;
+        margin-bottom: 6px;
+    }
+    
+    .stats-actions {
+        flex-direction: column;
+    }
+    
+    .stats-actions .button {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .actions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .health-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .health-value {
+        align-self: flex-end;
+    }
+}
+
+/* ==========================================================================
+   Dark Mode Support (if admin uses dark mode)
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    .stat-item {
+        background: #2c3338;
+        border-color: #3c434a;
+        color: #f0f0f1;
+
+        &:hover {
+            background: #3c434a;
+        }
+    }
+    
+    .stat-number {
+        color: #72aee6;
+    }
+    
+    .stat-label {
+        color: #a7aaad;
+    }
+    
+    .activity-section h4 {
+        background: #2c3338;
+        color: #f0f0f1;
+    }
+    
+    .activity-list li {
+        border-color: #3c434a;
+    }
+    
+    .activity-list a {
+        color: #72aee6;
+    }
+    
+    .activity-list a:hover {
+        color: #9ec5e8;
+    }
+    
+    .action-item {
+        background: #2c3338;
+        border-color: #3c434a;
+        color: #f0f0f1;
+    }
+    
+    .action-item:hover {
+        background: #0073aa;
+    }
+    
+    .health-item {
+        border-color: #3c434a;
+    }
+    
+    .health-label {
+        color: #f0f0f1;
+    }
+}
+
+/* ==========================================================================
+   Animation Enhancements
+   ========================================================================== */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.mms-dashboard-stats,
+.mms-recent-activity,
+.mms-quick-actions,
+.mms-system-health {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.stat-item,
+.action-item {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   Loading States
+   ========================================================================== */
+
+.mms-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.mms-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #0073aa;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+// 
+#wp-admin-bar-logo_author a {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.cf-container__tabs-list .cf-container__tabs-item--current {
+    background-color: #e2e4e7 !important;
+}

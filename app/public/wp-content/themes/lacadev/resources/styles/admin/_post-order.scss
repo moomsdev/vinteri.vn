@@ -1,0 +1,51 @@
+/**
+ * Post Order Styles
+ * 
+ * @package LacaDev
+ */
+
+.wp-list-table tbody tr[draggable="true"] {
+  cursor: move;
+  transition: background-color 0.2s ease;
+    
+  &:hover {
+    background-color: #f0f0f1;
+  }
+}
+
+.wp-list-table tbody tr.dragging {
+  opacity: 0.5;
+  background-color: #f0f0f1;
+}
+
+.wp-list-table tbody tr.drag-over {
+  border-top: 2px solid #2271b1;
+}
+
+// Visual feedback for drag handle
+.wp-list-table tbody tr td {
+  position: relative;
+    
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 20px;
+    background: repeating-linear-gradient(
+      to bottom,
+      #8c8f94 0px,
+      #8c8f94 2px,
+      transparent 2px,
+      transparent 4px
+    );
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+}
+
+.wp-list-table tbody tr:hover td:first-child::before {
+  opacity: 0.5;
+}
