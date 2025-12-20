@@ -1,10 +1,8 @@
 // Abstracts
 @use "./abstracts/variables.scss" as *;
 @use "./abstracts/mixin.scss" as *;
-// Node Modules
-@import "~@csstools/normalize.css";
-@import "swiper/swiper-bundle.css";
 
+// Base
 // Base
 @use "./base/fonts.scss" as *;
 @use "./base/wordpress.scss" as *;
@@ -23,3 +21,6 @@
 @use "./pages/404.scss" as *;
 @use "./pages/contact.scss" as *;
 @use "./pages/cpt.scss" as *;
+// Vendors (Must be after @use)
+@import "~@csstools/normalize.css";
+@import "swiper/swiper-bundle.css";

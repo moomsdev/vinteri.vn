@@ -1,4 +1,4 @@
-@use "../utilities/variables.scss" as *;
+@use "./variables" as *;
 
 /// Block Element
 @mixin element($element) {

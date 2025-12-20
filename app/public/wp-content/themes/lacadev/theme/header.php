@@ -128,7 +128,7 @@ if (!defined('ABSPATH')) {
                                     'theme_location' => 'main-menu',
                                     'container' => 'nav',
                                     'container_class' => 'main-menu',
-                                    'walker' => new MMS_Menu_Walker(),
+                                    'walker' => new Laca_Menu_Walker(),
                                 ]);
                                 ?>
                             </nav>
