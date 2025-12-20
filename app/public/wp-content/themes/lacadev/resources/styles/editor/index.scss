@@ -5,8 +5,8 @@
  */
 
 // Import theme utilities
-@use "../theme/utilities/variables.scss" as *;
-@use "../theme/utilities/mixin.scss" as *;
+@use "../theme/abstracts/variables.scss" as *;
+@use "../theme/abstracts/mixin.scss" as *;
 @use "../theme/layout/general.scss" as *;
 
 // Import blocks module to access the mixin

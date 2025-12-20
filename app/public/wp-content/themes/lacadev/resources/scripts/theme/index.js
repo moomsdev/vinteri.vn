@@ -46,61 +46,6 @@ function initAnimations() {
 	//   });
 }
 
-function initHoverService() {}
-
-function initToggleDarkMode() {
-	const toggleInput = document.querySelector( '.darkmode-icon input' );
-	const rootElement = document.documentElement;
-	const prefersDark = window.matchMedia(
-		'(prefers-color-scheme: dark)'
-	).matches;
-
-	// Set initial theme based on system preference or saved preference
-	const savedTheme = localStorage.getItem( 'theme' );
-	const initialTheme = savedTheme || ( prefersDark ? 'dark' : 'light' );
-	rootElement.setAttribute( 'data-theme', initialTheme );
-	if ( toggleInput ) {
-		toggleInput.checked = initialTheme === 'dark';
-	}
-
-	// Handle theme toggle
-	if ( toggleInput ) {
-		// Set initial ARIA state
-		toggleInput.setAttribute( 'aria-checked', initialTheme === 'dark' );
-
-		toggleInput.addEventListener( 'change', ( event ) => {
-			const isDark = event.target.checked;
-			const newTheme = isDark ? 'dark' : 'light';
-
-			// Update ARIA state
-			toggleInput.setAttribute( 'aria-checked', isDark );
-
-			if ( document.startViewTransition ) {
-				document.startViewTransition( () => {
-					rootElement.setAttribute( 'data-theme', newTheme );
-					localStorage.setItem( 'theme', newTheme );
-				} );
-			} else {
-				rootElement.setAttribute( 'data-theme', newTheme );
-				localStorage.setItem( 'theme', newTheme );
-			}
-		} );
-	}
-
-	// Listen for system theme changes
-	window
-		.matchMedia( '(prefers-color-scheme: dark)' )
-		.addEventListener( 'change', ( e ) => {
-			if ( ! localStorage.getItem( 'theme' ) ) {
-				const newTheme = e.matches ? 'dark' : 'light';
-				rootElement.setAttribute( 'data-theme', newTheme );
-				if ( toggleInput ) {
-					toggleInput.checked = e.matches;
-				}
-			}
-		} );
-}
-
 function initMenu() {
 	const $menuBtn = document.getElementById( 'btn-hamburger' );
 	const navMenu = document.querySelector( 'nav.nav-menu' );
@@ -129,14 +74,6 @@ function animatedMenu( x ) {
 	x.classList.toggle( 'animeOpenClose' );
 }
 
-function initMmenu() {
-	// new Mmenu("#mobile_menu", {
-	//   extensions: ["position-bottom", "fullscreen", "theme-black", "border-full"],
-	//   searchfield: false,
-	//   counters: false,
-	// });
-}
-
 function initSwiperSlider() {
 	setTimeout( () => {
 		new Swiper( '.sliders', {
@@ -150,32 +87,6 @@ function initSwiperSlider() {
 			},
 		} );
 	}, 500 );
-}
-
-function initIsotop() {
-	//   $(".menu-wrapper").imagesLoaded(() => {
-	//     const $menuWrapper = $(".menu-wrapper");
-	//
-	//     $(".menu-filter li").on("click", function () {
-	//       $(".menu-filter li").removeClass("active");
-	//       $(this).addClass("active");
-	//
-	//       $menuWrapper.isotope({
-	//         filter: $(this).attr("data-filter"),
-	//         animationOptions: {
-	//           duration: 750,
-	//           easing: "linear",
-	//           queue: false,
-	//         },
-	//       });
-	//       return false;
-	//     });
-	//
-	//     $menuWrapper.isotope({
-	//       itemSelector: ".loop-food",
-	//       layoutMode: "masonry",
-	//     });
-	//   });
 }
 
 /**
@@ -264,30 +175,5 @@ function setupGsap404() {
 		repeat: -1,
 		repeatDelay: 8,
 		delay: 2,
-	} );
-}
-
-function animateText( selector ) {
-	const hasAnim = document.querySelectorAll( '.slogan p' );
-	hasAnim.forEach( ( element ) => {
-		const splitType = 'lines, chars';
-		const splitto = new SplitText( element, {
-			type: splitType,
-			linesClass: 'anim_line',
-			charsClass: 'anim_char',
-			wordsClass: 'anim_word',
-		} );
-		const chars = element.querySelectorAll( '.anim_char' );
-		gsap.fromTo(
-			chars,
-			{ y: '100%', autoAlpha: 0 },
-			{
-				y: '0%',
-				autoAlpha: 1,
-				duration: 0.8,
-				stagger: 0.01,
-				ease: 'power2.out',
-			}
-		);
 	} );
 }
