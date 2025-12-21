@@ -22,6 +22,21 @@ if (!defined('ABSPATH')) {
     <link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
     <?php wp_head(); ?>
 
+	<!-- Dynamic CSS Variables from Theme Options -->
+	<style>
+		:root {
+			--primary-color:
+				<?php echo getOption('primary_color') ?: '#010101'; ?>
+			;
+			--secondary-color:
+				<?php echo getOption('secondary_color') ?: '#626262'; ?>
+			;
+			--text-color:
+				<?php echo getOption('text_color') ?: '#fff'; ?>
+			;
+		}
+	</style>
+
     <link rel="apple-touch-icon" sizes="57x57" href="<?php theAsset('favicon/apple-icon-57x57.png'); ?>">
     <link rel="apple-touch-icon" sizes="60x60" href="<?php theAsset('favicon/apple-icon-60x60.png'); ?>">
     <link rel="apple-touch-icon" sizes="72x72" href="<?php theAsset('favicon/apple-icon-72x72.png'); ?>">

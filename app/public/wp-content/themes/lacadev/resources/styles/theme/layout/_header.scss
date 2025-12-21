@@ -1,3 +1,221 @@
 @use "../abstracts/variables.scss" as *;
 @use "../abstracts/mixin.scss" as *;
 
+.header {
+  background: $primaryColor;
+
+  // header top
+  &__top {
+    border-bottom: 1px solid #fff;
+
+    &-inner {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    &-left {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    &-right {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    &-item {
+      padding: .8rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      &:first-child {
+        padding-left: 0;
+      }
+    }
+    
+    &-text {
+      font-size: 1.6rem;
+      font-weight: 300;
+    }
+
+    svg {
+      width: 2rem;
+      height: 2rem;
+      fill: #fff;
+    }
+  }
+
+  //header bottom
+  &__bottom {
+    position: relative;
+
+    &-inner {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    &-logo {
+      img {
+        width: 100%;
+        max-width: 20rem;
+        object-fit: contain;
+      }
+    }
+
+    // main-menu
+    &-menu {
+      ul {
+        display: flex;
+        gap: 1rem;
+        list-style: none;
+
+        li {
+          padding: 5rem 0;
+
+          &.has-children {
+            position: relative;
+
+            &:hover {
+              .sub-menu {
+                visibility: visible;
+                opacity: 1;
+                transform: translateY(-1px);
+                transition: all 0.5s ease 0.05s;
+              }
+
+              > a {
+                &::before {
+                  transform: rotate(-45deg);
+                  background-color: $secondaryColor;
+                }
+                &::after {
+                  transform: rotate(45deg);
+                  background-color: $secondaryColor;
+                }
+              }
+            }
+
+            //arrow down
+            > a {
+              position: relative;
+
+              &::after,
+              &::before {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 100%;
+                display: block;
+                width: 6px;
+                height: 1px;
+                background-color: #fff;
+                transition: 0.3s ease-in-out;
+              }
+
+              &:before {
+                transform: rotate(45deg);
+              }
+              &:after {
+                left: calc(100% + 4px);
+                transform: rotate(-45deg);
+              }
+            }
+          }
+
+          &.actived {
+            a {
+              color: $secondaryColor;
+            }
+          }
+
+          &:hover {
+            a {
+              color: $secondaryColor;
+            }
+          }
+        }
+
+        a {
+          padding: 1rem .8rem;
+          margin-right: 1.5rem;
+          font-weight: 500;
+          font-size: 1.6rem;
+          color: #fff;
+          text-transform: uppercase;
+          
+          
+        }
+
+        // submenu
+        ul.sub-menu {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          width: 30rem;
+          box-shadow: 1px 1px 3px 1px #ddd;
+          visibility: hidden;
+          z-index: 999;
+          display: block;
+          transition: all 0.05s ease 0s;
+          transform: translateY(50px);
+          opacity: 0;
+          background-color: #fff;
+
+          li {
+            padding: 0;
+            width: 100%;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+
+            a {
+              position: relative;
+              display: block;
+              padding: 1rem;
+              color: #808080;
+              transition: all 0.4s ease 0s;
+
+              &::before {
+                content: "";
+                position: absolute;
+                background-color: $secondaryColor;
+                bottom: 50%;
+                height: auto;
+                left: 0;
+                top: 50%;
+                transition: all 0.4s ease 0s;
+                width: 2px;
+              }
+
+              &:hover {
+                color: $secondaryColor;
+                padding-left: 1.5rem;
+
+                &::before {
+                  top: 0;
+                  bottom: 0;
+                }
+              }
+
+            }
+          }
+        }
+      }
+    }
+
+    svg {
+      width: 2rem;
+      height: 2rem;
+      fill: #fff;
+    }
+
+    .header__bottom-search {
+      position: inherit;
+    }
+    
+  }
+
+}

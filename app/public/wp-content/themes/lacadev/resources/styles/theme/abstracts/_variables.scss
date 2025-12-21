@@ -1,31 +1,8 @@
-:root {
-  --primary-color: #333;
-  --primary-color-dark: #fff;
-  --secondary-color: #626262;
-  --secondary-color-dark: #fff;
-  --background-color: hsla(230, 80%, 98%, 1);
-  --background-dark: hsla(230, 55%, 4%, 1);
-}
-
-html[data-theme="dark"] {
-  --primary-color: #fff;
-  --primary-color-dark: #333;
-  --secondary-color: #fff;
-  --secondary-color-dark: #626262;
-  --background-color: hsla(230, 55%, 4%, 1);
-  --background-dark: hsla(230, 80%, 98%, 1);
-}
-
-$primaryFont: "Be Vietnam Pro", sans-serif;
-$secondaryFont: "Quicksand", sans-serif;
+$primaryFont: "Quicksand", sans-serif;
 
 $primaryColor: var(--primary-color);
-$primaryColorDark: var(--primary-color-dark);
 $secondaryColor: var(--secondary-color);
-$secondaryColorDark: var(--secondary-color-dark);
-
-$backgroundColor: var(--background-color);
-$backgroundDark: var(--background-dark);
+$textColor: var(--text-color);
 
 $thin: 100;
 $extraLight: 200;
