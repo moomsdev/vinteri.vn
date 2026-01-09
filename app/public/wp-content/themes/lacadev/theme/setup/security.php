@@ -27,11 +27,14 @@ add_action('send_headers', function() {
     
     // Content Security Policy (adjust as needed for your site)
     $csp = "default-src 'self'; ";
-    $csp .= "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com; ";
+    $csp .= "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://images.dmca.com https://apis.google.com blob:; ";
     $csp .= "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; ";
     $csp .= "font-src 'self' https://fonts.gstatic.com data:; ";
+    $csp .= "connect-src 'self' https://www.youtube.com https://www.google-analytics.com https://stats.g.doubleclick.net https://apis.google.com ws: wss: webpack:; ";
+    $csp .= "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://docs.google.com https://www.google.com; ";
+    $csp .= "media-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; ";
     $csp .= "img-src 'self' data: https: http:; ";
-    $csp .= "connect-src 'self'; ";
+    $csp .= "worker-src 'self' blob:; ";
     $csp .= "frame-ancestors 'self';";
     
     header("Content-Security-Policy: " . $csp);
@@ -58,7 +61,7 @@ add_filter('the_generator', '__return_empty_string');
 /**
  * Disable file editing in admin
  */
-if (!defined('DISALLOW_FILE_EDIT')) {
+if (get_option('_hide_theme_editor') === 'yes' && !defined('DISALLOW_FILE_EDIT')) {
     define('DISALLOW_FILE_EDIT', true);
 }
 

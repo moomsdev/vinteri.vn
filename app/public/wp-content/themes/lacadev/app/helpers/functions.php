@@ -254,6 +254,26 @@ function getRelatePosts($postId = null, $postCount = null)
     $postCount = $postCount ?: get_option('posts_per_page');
     $thisPost = $postId ? get_post($postId) : $post;
 
+    if (!$thisPost || !isset($thisPost->ID)) {
+        return new WP_Query(['post__in' => []]);
+    }
+
+    // Generate cache key
+    $cache_key = 'related_posts_' . $thisPost->ID . '_' . $thisPost->post_type . '_' . $postCount;
+    $cached_post_ids = get_transient($cache_key);
+
+    // Return cached query if exists
+    if (false !== $cached_post_ids && is_array($cached_post_ids)) {
+        return new WP_Query([
+            'post__in' => $cached_post_ids,
+            'post_type' => $thisPost->post_type,
+            'post_status' => 'publish',
+            'posts_per_page' => $postCount,
+            'orderby' => 'post__in',
+        ]);
+    }
+
+    // Build query if not cached
     $taxonomies = get_post_taxonomies($thisPost->ID);
     $arrTaxQuery = ['relation' => 'OR'];
     foreach ($taxonomies as $taxonomy) {
@@ -267,36 +287,96 @@ function getRelatePosts($postId = null, $postCount = null)
         }
     }
 
-    return new WP_Query([
+    $query = new WP_Query([
         'post_type' => $thisPost->post_type,
         'post_status' => 'publish',
         'posts_per_page' => $postCount,
         'post__not_in' => [$thisPost->ID],
         'tax_query' => $arrTaxQuery,
     ]);
+
+    // Cache post IDs for 1 hour
+    if ($query->have_posts()) {
+        $post_ids = wp_list_pluck($query->posts, 'ID');
+        set_transient($cache_key, $post_ids, HOUR_IN_SECONDS);
+    }
+
+    return $query;
 }
 
 function getLatestPosts($postType = 'post', $postCount = null)
 {
-    return new WP_Query([
+    $postCount = $postCount ?: get_option('posts_per_page');
+    
+    // Generate cache key
+    $cache_key = 'latest_posts_' . $postType . '_' . $postCount;
+    $cached_post_ids = get_transient($cache_key);
+
+    // Return cached query if exists
+    if (false !== $cached_post_ids && is_array($cached_post_ids)) {
+        return new WP_Query([
+            'post__in' => $cached_post_ids,
+            'post_type' => $postType,
+            'post_status' => 'publish',
+            'posts_per_page' => $postCount,
+            'orderby' => 'post__in',
+        ]);
+    }
+
+    // Build query if not cached
+    $query = new WP_Query([
         'post_type' => $postType,
         'post_status' => 'publish',
-        'posts_per_page' => $postCount ?: get_option('posts_per_page'),
+        'posts_per_page' => $postCount,
         'orderby' => 'date',
         'order' => 'DESC',
     ]);
+
+    // Cache post IDs for 15 minutes (latest posts change frequently)
+    if ($query->have_posts()) {
+        $post_ids = wp_list_pluck($query->posts, 'ID');
+        set_transient($cache_key, $post_ids, 15 * MINUTE_IN_SECONDS);
+    }
+
+    return $query;
 }
 
 function getTopViewPosts($postType = 'post', $postCount = null)
 {
-    return new WP_Query([
+    $postCount = $postCount ?: get_option('posts_per_page');
+    
+    // Generate cache key
+    $cache_key = 'top_view_posts_' . $postType . '_' . $postCount;
+    $cached_post_ids = get_transient($cache_key);
+
+    // Return cached query if exists
+    if (false !== $cached_post_ids && is_array($cached_post_ids)) {
+        return new WP_Query([
+            'post__in' => $cached_post_ids,
+            'post_type' => $postType,
+            'post_status' => 'publish',
+            'posts_per_page' => $postCount,
+            'orderby' => 'post__in',
+        ]);
+    }
+
+    // Build query if not cached
+    $query = new WP_Query([
         'post_type' => $postType,
         'post_status' => 'publish',
-        'posts_per_page' => $postCount ?: get_option('posts_per_page'),
+        'posts_per_page' => $postCount,
         'meta_key' => '_gm_view_count',
         'orderby' => 'meta_value_num',
         'order' => 'DESC',
     ]);
+
+    // Cache post IDs for 30 minutes (view counts change less frequently)
+    if ($query->have_posts()) {
+        $post_ids = wp_list_pluck($query->posts, 'ID');
+        set_transient($cache_key, $post_ids, 30 * MINUTE_IN_SECONDS);
+    }
+
+    return $query;
 }
 
 function getListAllPages()
@@ -391,6 +471,60 @@ function crb_normalize_path($path)
 // =============================================================================
 // PERFORMANCE OPTIMIZATIONS
 // =============================================================================
+
+/**
+ * Clear query cache when posts are updated/published/deleted
+ */
+function laca_clear_query_cache($post_id)
+{
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    $post = get_post($post_id);
+    if (!$post) {
+        return;
+    }
+
+    $post_type = $post->post_type;
+    $posts_per_page = get_option('posts_per_page');
+
+    // Clear related posts cache for this post
+    delete_transient('related_posts_' . $post_id . '_' . $post_type . '_' . $posts_per_page);
+
+    // Clear latest posts cache for this post type
+    delete_transient('latest_posts_' . $post_type . '_' . $posts_per_page);
+
+    // Clear top view posts cache for this post type
+    delete_transient('top_view_posts_' . $post_type . '_' . $posts_per_page);
+
+    // Clear all related posts caches (posts that might relate to this one)
+    global $wpdb;
+    $wpdb->query($wpdb->prepare(
+        "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+        $wpdb->esc_like('_transient_related_posts_') . '%'
+    ));
+}
+add_action('save_post', 'laca_clear_query_cache');
+add_action('delete_post', 'laca_clear_query_cache');
+add_action('wp_trash_post', 'laca_clear_query_cache');
+
+/**
+ * Clear cache when post meta (view count) is updated
+ */
+function laca_clear_query_cache_on_meta_update($meta_id, $post_id, $meta_key, $meta_value)
+{
+    if ($meta_key === '_gm_view_count') {
+        $post = get_post($post_id);
+        if ($post) {
+            $post_type = $post->post_type;
+            $posts_per_page = get_option('posts_per_page');
+            delete_transient('top_view_posts_' . $post_type . '_' . $posts_per_page);
+        }
+    }
+}
+add_action('updated_post_meta', 'laca_clear_query_cache_on_meta_update', 10, 4);
+add_action('added_post_meta', 'laca_clear_query_cache_on_meta_update', 10, 4);
 
 function contactform_dequeue_scripts()
 {

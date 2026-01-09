@@ -89,7 +89,7 @@ Ngày: 15/12/2025
   - Fix all failing combinations
 
 - [ ] **Thêm Focus Indicators**
-  - File: `resources/styles/theme/abstracts/_accessibility.scss`
+  - File: `resources/styles/theme/utilities/_accessibility.scss`
   - Visible outline cho keyboard navigation
   - Test bằng Tab key
 

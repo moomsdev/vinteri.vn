@@ -30,6 +30,7 @@ class AdminSettings
 			$this->removeUnnecessaryMenus();
 		}
 
+		$this->applyAdminColorVariables();
 		$this->addDashboardContactWidget();
 		$this->removeDefaultWidgets();
 		$this->removeDashboardWidgets();
@@ -48,8 +49,6 @@ class AdminSettings
 		if (get_option('_disable_use_weak_password') === 'yes') {
 			$this->disableCheckboxUseWeakPassword();
 		}
-
-
 
 		if (get_option('_hide_post_menu_default') === 'yes') {
 			$this->hidePostMenuDefault();
@@ -79,6 +78,26 @@ class AdminSettings
 			}
 			die($url);
 		});
+	}
+
+	public function applyAdminColorVariables(): void
+	{
+		$printColors = static function () {
+			$primary   = carbon_get_theme_option('primary_color_ad') ?: '#566a7f';
+			$secondary = carbon_get_theme_option('secondary_color_ad') ?: '#566a7f';
+			$bg        = carbon_get_theme_option('bg_color_ad') ?: '#E6E4FC';
+			$text      = carbon_get_theme_option('text_color_ad') ?: '#000';
+
+			echo '<style>:root{'
+				. '--primary-color-ad:' . esc_attr($primary) . ';'
+				. '--secondary-color-ad:' . esc_attr($secondary) . ';'
+				. '--bg-color-ad:' . esc_attr($bg) . ';'
+				. '--text-color-ad:' . esc_attr($text) . ';'
+				. '}</style>';
+		};
+
+		add_action('admin_head', $printColors);
+		add_action('login_head', $printColors);
 	}
 
 	public function disableCheckboxUseWeakPassword()
@@ -189,7 +208,7 @@ class AdminSettings
 	public function changeFooterCopyright()
 	{
 		add_filter('admin_footer_text', static function () {
-			echo '<a href="' . AUTHOR['website'] . '" target="_blank">' . AUTHOR['name'] . '</a> © ' . date('Y') . ' - All rights reserved';
+			echo '<a href="' . AUTHOR['website'] . '" target="_blank">' . AUTHOR['name'] . '</a> © ' . date('Y') . ' - Coding amidst the journeys';
 		});
 	}
 
@@ -216,7 +235,7 @@ class AdminSettings
 		add_action('admin_bar_menu', static function ($wp_admin_bar) use ($author) {
 			$args = [
 				'id'    => 'logo_author',
-				'title' => '<img src="' . get_site_url() . "/wp-content/themes/lacadev/resources/images/dev/moomsdev-white.png" . '" style="height: 1rem; padding-top:.3rem;" alt="' . AUTHOR['name'] . '">',
+				'title' => '<img src="' . get_site_url() . "/wp-content/themes/lacadev/resources/images/dev/moomsdev-black.png" . '" class="logo-admin-bar" alt="' . AUTHOR['name'] . '">',
 				'href'  => $author['website'],
 				'meta'  => [
 					'target' => '_blank',
@@ -298,8 +317,6 @@ class AdminSettings
 		});
 	}
 
-	// Removed: addCustomResources() - jQuery Repeater was never used
-
 	public function disableChangeAdminEmailRequireConfirm()
 	{
 		remove_action('add_option_new_admin_email', 'update_option_new_admin_email');
@@ -375,7 +392,12 @@ class AdminSettings
 			}
 
 			global $submenu;
-			unset($submenu['themes.php'][5], $submenu['themes.php'][6], $submenu['themes.php'][11]);
+			unset($submenu['themes.php'][5], $submenu['themes.php'][6]);
+
+			if (get_option('_hide_theme_editor') === 'yes') {
+				unset($submenu['themes.php'][11]);
+				remove_submenu_page('themes.php', 'theme-editor.php');
+			}
 		}, 999);
 
 		$errorMessage = $this->errorMessage;
@@ -386,15 +408,20 @@ class AdminSettings
 				'plugin-editor',
 				'themes',
 				'theme-install',
-				'theme-editor',
+				'theme-install',
+				'customize',
 				'customize',
 				'tools',
 				'import',
 				'export',
 				'tools_page_action-scheduler',
 				'tools_page_export_personal_data',
+				'tools_page_export_personal_data',
 				'tools_page_remove_personal_data',
 			];
+			if (get_option('_hide_theme_editor') === 'yes') {
+				$deniePage[] = 'theme-editor';
+			}
 			$current_screen = get_current_screen();
 
 			if ($current_screen !== null && in_array($current_screen->id, $deniePage, true)) {
@@ -487,6 +514,16 @@ class AdminSettings
 			$options = Container::make('theme_options', __('Laca Admin', 'laca'))
 				->set_page_file(__('laca-admin', 'laca'))
 				->set_page_menu_position(3)
+				->add_tab(__('ADMIN COLOR', 'laca'), [
+					Field::make('color', 'primary_color_ad', __('Primary color', 'laca'))
+						->set_width(25),
+					Field::make('color', 'secondary_color_ad', __('Secondary color', 'laca'))
+						->set_width(25),
+					Field::make('color', 'bg_color_ad', __('Background color', 'laca'))
+						->set_width(25),
+					Field::make('color', 'text_color_ad', __('Text color', 'laca'))
+						->set_width(25),
+				])
 				->add_tab(__('ADMIN', 'laca'), [
 					Field::make('checkbox', 'is_maintenance', __('Bật chế độ bảo trì', 'laca')) 
 						->set_width(30),
@@ -494,6 +531,13 @@ class AdminSettings
 						->set_width(70)
 						->set_html( '<i class="fa-regular fa-lightbulb-on"></i> Khi bật chế độ bảo trì, tất cả người dùng sẽ không thể truy cập vào trang web của bạn. Bạn có thể tạm thời đóng băng trang web để tránh việc người dùng truy cập vào trang web của bạn.' ),
 					
+					// hide theme editor
+					Field::make('checkbox', 'hide_theme_editor', __('Tắt chức năng chỉnh sửa code', 'laca'))
+					->set_width(30),
+					Field::make( 'html', 'hide_theme_editor_desc' )
+						->set_width(70)
+						->set_html( '<i class="fa-regular fa-lightbulb-on"></i> Khi bật chế độ này, bạn sẽ không thể chỉnh sửa code trong trang admin.' ),
+
 					Field::make('checkbox', 'disable_admin_confirm_email', __('Tắt chức năng xác thực email khi thay đổi email admin', 'laca'))
 						->set_width(30),
 					Field::make( 'html', 'disable_admin_confirm_email_desc' )
@@ -517,6 +561,7 @@ class AdminSettings
 					Field::make( 'html', 'hide_comment_menu_default_desc' )
 						->set_width(70)
 						->set_html( '<i class="fa-regular fa-lightbulb-on"></i> Khi bật chế độ này, bạn sẽ không thể xem menu bình luận trong trang admin.' ),
+						
 				])
 				->add_tab(__('SMTP', 'laca'), [
 					Field::make('checkbox', 'use_smtp', __('Sử dụng SMTP để gửi mail', 'laca')),
@@ -589,8 +634,6 @@ class AdminSettings
 					
 				// The function of lazy loading images
 				Field::make( 'separator', 'title_lazy_loading_images', __( 'The function of lazy loading images' ) ),
-				Field::make('checkbox', 'enable_lazy_loading_images', __('Enable image lazy loading', 'laca'))
-					->set_width(30),
 				Field::make( 'html', 'lazy_loading_images_desc' )
 					->set_width(70)
 					->set_html( '<i class="fa-regular fa-lightbulb-on"></i> Nếu bạn muốn lazy load hình ảnh mỗi khi trang tải, hãy bật tính năng này. Chức năng này giúp trang web của bạn tải nhanh hơn' ),

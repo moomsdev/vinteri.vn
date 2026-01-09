@@ -1,3 +1,8 @@
 @use "../abstracts/variables.scss" as *;
 @use "../abstracts/mixin.scss" as *;
 
+.list-post {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}

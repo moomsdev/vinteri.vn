@@ -1,5 +1,6 @@
 // Custom Post Order
 @use "post-order";
+@use "admin-custom";
 
 html:where(.wp-block) {
   max-width: 120rem;
@@ -57,11 +58,6 @@ body.wp-admin {
   }
 }
 
-.subsubsub {
-  z-index: 9999;
-  position: relative;
-}
-
 input[name="carbon_fields_compact_input[_smtp_password]"] {
   max-width: 85%;
   display: inline-block;
@@ -94,4 +90,8 @@ button[data-toggle="password-toggle"] {
 .metabox-holder-disabled .accordion-section-title,
 .metabox-holder-disabled .postbox {
   opacity: 1 !important;
+}
+
+.dashicons, .dashicons-before:before {
+  font-family: "dashicons" !important;
 }

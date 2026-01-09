@@ -39,7 +39,6 @@ define('APP_VENDOR_DIR_NAME', 'vendor');
 
 // Theme Component Names
 define('APP_THEME_USER_NAME', 'users');
-define('APP_THEME_ECOMMERCE_NAME', 'users');
 define('APP_THEME_TAXONOMY_NAME', 'taxonomies');
 define('APP_THEME_WIDGET_NAME', 'widgets');
 define('APP_THEME_BLOCK_NAME', 'blocks');
@@ -57,7 +56,7 @@ define('APP_DIST_DIR', APP_DIR . APP_DIST_DIR_NAME . DIRECTORY_SEPARATOR);
 
 // Setup Directories
 define('APP_APP_SETUP_DIR', APP_THEME_DIR . APP_APP_SETUP_DIR_NAME . DIRECTORY_SEPARATOR);
-define('APP_APP_SETUP_ECOMMERCE_DIR', APP_THEME_DIR . APP_APP_SETUP_DIR_NAME . DIRECTORY_SEPARATOR . APP_THEME_ECOMMERCE_NAME . DIRECTORY_SEPARATOR);
+// define('APP_APP_SETUP_ECOMMERCE_DIR', APP_THEME_DIR . APP_APP_SETUP_DIR_NAME . DIRECTORY_SEPARATOR . APP_THEME_ECOMMERCE_NAME . DIRECTORY_SEPARATOR);
 define('APP_APP_SETUP_USER_DIR', APP_THEME_DIR . APP_APP_SETUP_DIR_NAME . DIRECTORY_SEPARATOR . APP_THEME_USER_NAME . DIRECTORY_SEPARATOR);
 define('APP_APP_SETUP_TAXONOMY_DIR', APP_THEME_DIR . APP_APP_SETUP_DIR_NAME . DIRECTORY_SEPARATOR . APP_THEME_TAXONOMY_NAME . DIRECTORY_SEPARATOR);
 define('APP_APP_SETUP_WIDGET_DIR', APP_THEME_DIR . APP_APP_SETUP_DIR_NAME . DIRECTORY_SEPARATOR . APP_THEME_WIDGET_NAME . DIRECTORY_SEPARATOR);
@@ -102,7 +101,7 @@ add_action('after_setup_theme', function () {
 
     // Load security & SEO (Phase 1 improvements)
     require_once APP_APP_SETUP_DIR . 'security.php';
-    require_once APP_APP_SETUP_DIR . 'seo.php';
+    // require_once APP_APP_SETUP_DIR . 'seo.php';
 
     // Load image optimization (Phase 2 improvements)
     require_once APP_APP_SETUP_DIR . 'image-optimization.php';
@@ -131,7 +130,7 @@ add_action('after_setup_theme', function () {
 // AUTOLOAD COMPONENTS
 // =============================================================================
 $folders = [
-    APP_APP_SETUP_ECOMMERCE_DIR,
+    // APP_APP_SETUP_ECOMMERCE_DIR,
     APP_APP_SETUP_TAXONOMY_DIR,
     APP_APP_SETUP_WALKER_DIR,
 ];

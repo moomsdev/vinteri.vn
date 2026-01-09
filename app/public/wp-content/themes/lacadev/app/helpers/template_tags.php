@@ -180,6 +180,27 @@ function thePagination($query = null) {
         $query = $wp_query;
     }
 
+    // Preload post metadata to prevent N+1 queries
+    // This optimizes performance when looping through posts after pagination
+    if ($query instanceof WP_Query && !empty($query->posts)) {
+        // Preload post data, meta, and terms cache
+        update_post_caches($query->posts);
+        
+        // Preload terms for all posts to avoid N+1 queries in get_the_terms()
+        $post_ids = wp_list_pluck($query->posts, 'ID');
+        if (!empty($post_ids)) {
+            // Get all taxonomies for this post type
+            $post_type = !empty($query->posts[0]) ? $query->posts[0]->post_type : 'post';
+            $taxonomies = get_object_taxonomies($post_type);
+            
+            // Preload terms for all posts using wp_get_object_terms
+            // This loads all terms in one query instead of N queries
+            foreach ($taxonomies as $taxonomy) {
+                wp_get_object_terms($post_ids, $taxonomy, ['fields' => 'all']);
+            }
+        }
+    }
+
     $paged = (get_query_var('paged') === 0) ? 1 : get_query_var('paged');
     $pages = paginate_links([
         'base'      => str_replace(999999999, '%#%', esc_url(get_pagenum_link(999999999))),
@@ -216,6 +237,24 @@ function thePagination($query = null) {
 function thePostTypePagination($query, $post_type) {
     if (empty($query) || $query->max_num_pages <= 1) {
         return;
+    }
+
+    // Preload post metadata to prevent N+1 queries
+    if ($query instanceof WP_Query && !empty($query->posts)) {
+        // Preload post data, meta, and terms cache
+        update_post_caches($query->posts);
+        
+        // Preload terms for all posts to avoid N+1 queries in get_the_terms()
+        $post_ids = wp_list_pluck($query->posts, 'ID');
+        if (!empty($post_ids)) {
+            $taxonomies = get_object_taxonomies($post_type);
+            
+            // Preload terms for all posts using wp_get_object_terms
+            // This loads all terms in one query instead of N queries
+            foreach ($taxonomies as $taxonomy) {
+                wp_get_object_terms($post_ids, $taxonomy, ['fields' => 'all']);
+            }
+        }
     }
 
     $paged_var = 'paged_' . $post_type;

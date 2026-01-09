@@ -38,10 +38,6 @@ class Optimize
 		if (get_option('_enable_smooth_scroll') === 'yes') {
 			$this->enableSmoothScroll();
 		}
-
-		if (get_option('_enable_lazy_loading_images') === 'yes') {
-			$this->enableLazyLoadingImages();
-		}
 	}
 
 	public function disableUseJqueryMigrate()
@@ -102,85 +98,4 @@ class Optimize
 			wp_enqueue_script('smooth-scroll', get_template_directory_uri() . '/dist/smooth-scroll.min.js', array(), '1.4.16', true);
 		});
 	}
-
-	public function enableLazyLoadingImages()
-	{
-		if (!is_admin()) {
-			wp_add_inline_script('jquery', '
-				jQuery(document).ready(function($) {
-					$("img").addClass("lazyload").each(function() {
-						var dataSrc = $(this).attr("src");
-						$(this).attr("data-src", dataSrc).removeAttr("src");
-					});
-				});
-			');
-			wp_enqueue_script('lazyload', get_template_directory_uri() . '/dist/lazysizes.min.js', array('jquery'), '5.3.2', true);
-		}
-	}
-
-    /**
-     * Tối ưu hóa thuộc tính ảnh (lazy loading, alt, dimension)
-     */
-    public function optimizeImages($attr, $attachment, $size)
-    {
-        $attr['loading'] = 'lazy';
-        $attr['decoding'] = 'async';
-        if (empty($attr['alt'])) {
-            $attr['alt'] = get_the_title($attachment->ID) ?: 'Image';
-        }
-        if (empty($attr['width']) || empty($attr['height'])) {
-            $image_meta = wp_get_attachment_metadata($attachment->ID);
-            if (!empty($image_meta['width']) && !empty($image_meta['height'])) {
-                $attr['width'] = $image_meta['width'];
-                $attr['height'] = $image_meta['height'];
-            }
-        }
-        return $attr;
-    }
-
-    /**
-     * Lazy load ảnh trong nội dung bài viết
-     */
-    public function optimizeContentImages($content)
-    {
-        $content = preg_replace('/<img((?![^>]*loading)[^>]*)>/', '<img$1 loading="lazy" decoding="async">', $content);
-        $content = preg_replace_callback('/<img([^>]+)>/', function ($matches) {
-            $img_tag = $matches[0];
-            if (strpos($img_tag, 'srcset') === false) {
-                return $img_tag;
-            }
-            return $img_tag;
-        }, $content);
-        return $content;
-    }
-
-    /**
-     * Đăng ký service worker cho cache
-     */
-    public function registerServiceWorker()
-    {
-        if (!is_admin() && !is_user_logged_in()) {
-            $sw_path = get_template_directory() . '/dist/sw.js';
-            
-            // Only register if SW file exists
-            if (!file_exists($sw_path)) {
-                return;
-            }
-            ?>
-            <script>
-                if ('serviceWorker' in navigator && !navigator.serviceWorker.controller) {
-                    window.addEventListener('load', function () {
-                        navigator.serviceWorker.register('<?= get_template_directory_uri(); ?>/dist/sw.js', {
-                            scope: '/'
-                        }).then(function (registration) {
-                            console.log('SW registered:', registration.scope);
-                        }).catch(function (error) {
-                            console.log('SW registration failed:', error);
-                        });
-                    });
-                }
-            </script>
-            <?php
-        }
-    }
-} 
+}

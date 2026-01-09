@@ -13,16 +13,21 @@ html {
   font-size: 62.5%;
   color-scheme: light;
   border: none !important;
+  background-color: $backgroundColor;
+
+  &[data-theme="dark"] {
+    color-scheme: dark;
+  }
 }
 
 body {
-    font-family: $primaryFont !important;
-    font-weight: $regular !important;
-    line-height: 1.5em !important;
-    color: $textColor !important;
-    scroll-behavior: smooth;
-
-    @include resFont(1.4, 1.6, true);
+  font-family: $secondaryFont !important;
+  font-weight: $regular !important;
+  line-height: 1.5em !important;
+  color: $primaryColor !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  scroll-behavior: smooth;
+  @include resFont(1.6, 1.8, true);
 }
 
 ::-webkit-scrollbar {
@@ -56,7 +61,7 @@ li::selection,
 button::selection,
 input::selection,
 bdi::selection {
-  color: #fff;
+  color: $backgroundColor;
   background-color: $primaryColor;
 }
 

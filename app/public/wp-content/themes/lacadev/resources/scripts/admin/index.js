@@ -90,9 +90,9 @@ document.addEventListener( 'click', function ( e ) {
 
 		scripts.disableTheGrid();
 
-		// Get WordPress nonce if available
-		const nonce =
-			typeof ajaxurl_params !== 'undefined' ? ajaxurl_params.nonce : '';
+		// Get nonce from data attribute (preferred) or fallback to global
+		const nonce = trigger.dataset.nonce ||
+			( typeof ajaxurl_params !== 'undefined' ? ajaxurl_params.nonce : '' );
 
 		fetch( '/wp-admin/admin-ajax.php', {
 			method: 'POST',
@@ -101,7 +101,7 @@ document.addEventListener( 'click', function ( e ) {
 				action: 'update_post_thumbnail_id',
 				post_id: postId,
 				attachment_id: attachmentId,
-				nonce, // Add WordPress nonce for security
+				nonce, // WordPress nonce for CSRF protection
 			} ),
 		} )
 			.then( ( response ) => response.json() )
@@ -112,12 +112,14 @@ document.addEventListener( 'click', function ( e ) {
 
 					if ( tdCell ) {
 						// Replace entire cell content with thumbnail + remove button (same as PHP output)
+						// Preserve nonce for security
+						const preservedNonce = nonce || ( typeof ajaxurl_params !== 'undefined' ? ajaxurl_params.nonce : '' );
 						tdCell.innerHTML = `
               <div style='position:relative;display:inline-block;'>
-                <a href='javascript:void(0)' data-trigger-change-thumbnail-id data-post-id='${ postId }'>
+                <a href='javascript:void(0)' data-trigger-change-thumbnail-id data-post-id='${ postId }' data-nonce='${ preservedNonce }'>
                   <img src='${ originalImageUrl }' style='max-width:80px;max-height:80px;display:block;' alt='Thumbnail'/>
                 </a>
-                <a class='remove-thumbnail' href='javascript:void(0)' data-trigger-remove-thumbnail data-post-id='${ postId }' title='Remove thumbnail'>
+                <a class='remove-thumbnail' href='javascript:void(0)' data-trigger-remove-thumbnail data-post-id='${ postId }' data-nonce='${ preservedNonce }' title='Remove thumbnail'>
 									<svg viewBox='0 0 12 12'>
                     <path d='M11 1L1 11M1 1l10 10' stroke='currentColor' stroke-width='2' stroke-linecap='round'/>
                 	</svg>
@@ -147,42 +149,45 @@ document.addEventListener( 'click', function ( e ) {
 		return;
 	}
 
-	const postId = removeBtn.dataset.postId;
+		const postId = removeBtn.dataset.postId;
 
-	// Use SweetAlert2 for confirmation
-	Swal.fire( {
-		title: adminI18n.removeThumbnailTitle,
-		text: adminI18n.removeThumbnailText,
-		icon: 'warning',
-		showCancelButton: true,
-		confirmButtonColor: '#F15D4F',
-		cancelButtonColor: '#6c757d',
-		confirmButtonText: adminI18n.removeThumbnailConfirm,
-		cancelButtonText: adminI18n.removeThumbnailCancel,
-	} ).then( ( result ) => {
-		if ( ! result.isConfirmed ) {
-			return;
-		}
+		// Use SweetAlert2 for confirmation
+		Swal.fire( {
+			title: adminI18n.removeThumbnailTitle,
+			text: adminI18n.removeThumbnailText,
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#F15D4F',
+			cancelButtonColor: '#6c757d',
+			confirmButtonText: adminI18n.removeThumbnailConfirm,
+			cancelButtonText: adminI18n.removeThumbnailCancel,
+		} ).then( ( result ) => {
+			if ( ! result.isConfirmed ) {
+				return;
+			}
 
-		const nonce =
-			typeof ajaxurl_params !== 'undefined' ? ajaxurl_params.nonce : '';
+			// Get nonce from data attribute (preferred) or fallback to global
+			const nonce = removeBtn.dataset.nonce ||
+				( typeof ajaxurl_params !== 'undefined' ? ajaxurl_params.nonce : '' );
 
-		fetch( '/wp-admin/admin-ajax.php', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: new URLSearchParams( {
-				action: 'remove_post_thumbnail',
-				post_id: postId,
-				nonce,
-			} ),
-		} )
+			fetch( '/wp-admin/admin-ajax.php', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body: new URLSearchParams( {
+					action: 'remove_post_thumbnail',
+					post_id: postId,
+					nonce, // WordPress nonce for CSRF protection
+				} ),
+			} )
 			.then( ( response ) => response.json() )
 			.then( ( data ) => {
 				if ( data.success === true ) {
 					// Replace thumbnail with "Choose image" button
+					// Preserve nonce for security
+					const preservedNonce = nonce || ( typeof ajaxurl_params !== 'undefined' ? ajaxurl_params.nonce : '' );
 					const container = removeBtn.closest( 'td' );
 					if ( container ) {
-						container.innerHTML = `<a href='javascript:void(0)' data-trigger-change-thumbnail-id data-post-id='${ postId }'><div class='no-image-text'>${ adminI18n.chooseImage }</div></a>`;
+						container.innerHTML = `<a href='javascript:void(0)' data-trigger-change-thumbnail-id data-post-id='${ postId }' data-nonce='${ preservedNonce }'><div class='no-image-text'>${ adminI18n.chooseImage }</div></a>`;
 					}
 
 					// Show success message

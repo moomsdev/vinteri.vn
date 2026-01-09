@@ -1,152 +1,254 @@
 /**
  * Custom Post Order - Vanilla JavaScript
- * Drag & Drop ordering for posts, pages, and taxonomies
- *
- * @package
- * @since 1.0.0
+ * Drag & Drop ordering for posts, pages, and taxonomies without jQuery.
  */
 
-class PostOrderDragDrop {
-	constructor() {
-		// Check if lacaPostOrder is defined (only defined when post type is enabled)
-		if ( typeof lacaPostOrder === 'undefined' ) {
+const postOrderData = typeof window.lacaPostOrder !== 'undefined' ? window.lacaPostOrder : null;
+
+const state = {
+	draggingRow: null,
+};
+
+const selectors = {
+	tableBody: 'table.wp-list-table tbody#the-list',
+	inlineRow: '.inline-edit-row',
+	noItemsRow: 'tr.no-items',
+};
+
+const isTaxonomyScreen = () => Boolean( postOrderData?.taxonomy );
+
+const toggleSpinner = ( show = false ) => {
+	const actions = document.querySelector( '.tablenav .actions' );
+	if ( ! actions ) {
+		return;
+	}
+
+	let spinner = actions.querySelector( '.spinner' );
+
+	if ( show ) {
+		if ( ! spinner ) {
+			spinner = document.createElement( 'span' );
+			spinner.className = 'spinner is-active';
+			actions.prepend( spinner );
+		}
+		spinner.classList.add( 'is-active' );
+	} else if ( spinner ) {
+		spinner.classList.remove( 'is-active' );
+	}
+};
+
+const serializeOrder = ( rows ) => {
+	const params = new URLSearchParams();
+
+	rows.forEach( ( row ) => {
+		if ( ! row.id ) {
 			return;
 		}
-
-		this.table = document.querySelector( '.wp-list-table tbody' );
-		this.isTermPage = document.body.classList.contains( 'edit-tags-php' );
-
-		if ( ! this.table ) {
-			return;
+		const [ prefix, id ] = row.id.split( '-' );
+		if ( prefix && id ) {
+			params.append( `${ prefix }[]`, id );
 		}
+	} );
 
-		this.init();
+	return params.toString();
+};
+
+const sendOrder = ( serializedOrder ) => {
+	if ( ! postOrderData ) {
+		return;
 	}
 
-	init() {
-		// Make table rows draggable
-		this.makeSortable();
+	const body = new URLSearchParams();
+	body.set( 'action', isTaxonomyScreen() ? 'update-menu-order-tags' : 'update-menu-order' );
+	body.set( 'nonce', postOrderData.nonce || '' );
+	body.set( 'order', serializedOrder );
+
+	toggleSpinner( true );
+
+	fetch( postOrderData.ajaxUrl, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		body,
+	} ).finally( () => {
+		toggleSpinner( false );
+	} );
+};
+
+const applyDragAndDrop = () => {
+	const tableBody = document.querySelector( selectors.tableBody );
+
+	if ( ! tableBody ) {
+		return;
 	}
 
-	makeSortable() {
-		const rows = this.table.querySelectorAll( 'tr' );
+	const rows = Array.from( tableBody.querySelectorAll( 'tr' ) ).filter(
+		( row ) => ! row.matches( selectors.inlineRow )
+	);
 
-		rows.forEach( ( row ) => {
-			row.setAttribute( 'draggable', 'true' );
-			row.style.cursor = 'move';
+	rows.forEach( ( row ) => {
+		row.classList.add( 'is-draggable' );
+		row.setAttribute( 'draggable', 'true' );
 
-			row.addEventListener( 'dragstart', ( e ) =>
-				this.handleDragStart( e )
-			);
-			row.addEventListener( 'dragover', ( e ) =>
-				this.handleDragOver( e )
-			);
-			row.addEventListener( 'drop', ( e ) => this.handleDrop( e ) );
-			row.addEventListener( 'dragend', ( e ) => this.handleDragEnd( e ) );
-		} );
-	}
-
-	handleDragStart( e ) {
-		this.draggedElement = e.target.closest( 'tr' );
-		this.draggedElement.classList.add( 'dragging' );
-		e.dataTransfer.effectAllowed = 'move';
-		e.dataTransfer.setData( 'text/html', this.draggedElement.innerHTML );
-	}
-
-	handleDragOver( e ) {
-		if ( e.preventDefault ) {
-			e.preventDefault();
-		}
-
-		e.dataTransfer.dropEffect = 'move';
-
-		const targetRow = e.target.closest( 'tr' );
-		if ( targetRow && targetRow !== this.draggedElement ) {
-			const rect = targetRow.getBoundingClientRect();
-			const midpoint = rect.top + rect.height / 2;
-
-			if ( e.clientY < midpoint ) {
-				targetRow.parentNode.insertBefore(
-					this.draggedElement,
-					targetRow
-				);
-			} else {
-				targetRow.parentNode.insertBefore(
-					this.draggedElement,
-					targetRow.nextSibling
-				);
-			}
-		}
-
-		return false;
-	}
-
-	handleDrop( e ) {
-		if ( e.stopPropagation ) {
-			e.stopPropagation();
-		}
-
-		this.updateOrder();
-		return false;
-	}
-
-	handleDragEnd() {
-		this.draggedElement.classList.remove( 'dragging' );
-
-		// Remove all drag-over classes
-		const rows = this.table.querySelectorAll( 'tr' );
-		rows.forEach( ( row ) => row.classList.remove( 'drag-over' ) );
-	}
-
-	updateOrder() {
-		const rows = this.table.querySelectorAll( 'tr' );
-		const order = [];
-
-		rows.forEach( ( row ) => {
-			const id = row.id.replace( 'post-', '' ).replace( 'tag-', '' );
-			if ( id ) {
-				order.push( `post[]=${ id }` );
-			}
+		row.addEventListener( 'dragstart', ( event ) => {
+			state.draggingRow = row;
+			row.classList.add( 'is-dragging' );
+			event.dataTransfer.effectAllowed = 'move';
+			event.dataTransfer.setData( 'text/plain', row.id );
 		} );
 
-		const orderString = order.join( '&' );
-		const action = this.isTermPage
-			? 'update_term_order'
-			: 'update_post_order';
+		row.addEventListener( 'dragend', () => {
+			row.classList.remove( 'is-dragging' );
+			state.draggingRow = null;
+		} );
+	} );
 
-		this.sendAjaxRequest( action, orderString );
-	}
+	tableBody.addEventListener( 'dragover', ( event ) => {
+		event.preventDefault();
+		const targetRow = event.target.closest( 'tr' );
 
-	sendAjaxRequest( action, order ) {
-		if ( typeof lacaPostOrder === 'undefined' ) {
+		if ( ! state.draggingRow || ! targetRow || targetRow === state.draggingRow || targetRow.matches( selectors.inlineRow ) ) {
 			return;
 		}
 
-		const formData = new FormData();
-		formData.append( 'action', action );
-		formData.append( 'order', order );
-		formData.append( 'nonce', lacaPostOrder.nonce );
+		const rect = targetRow.getBoundingClientRect();
+		const shouldMoveAfter = event.clientY - rect.top > rect.height / 2;
 
-		fetch( lacaPostOrder.ajaxUrl, {
+		if ( shouldMoveAfter ) {
+			targetRow.after( state.draggingRow );
+		} else {
+			targetRow.before( state.draggingRow );
+		}
+	} );
+
+	tableBody.addEventListener( 'drop', ( event ) => {
+		event.preventDefault();
+		const orderedRows = Array.from( tableBody.querySelectorAll( 'tr' ) ).filter(
+			( row ) => ! row.matches( selectors.inlineRow ) && ! row.matches( selectors.noItemsRow )
+		);
+		const serializedOrder = serializeOrder( orderedRows );
+		if ( serializedOrder ) {
+			sendOrder( serializedOrder );
+		}
+	} );
+};
+
+const fixTableWidths = () => {
+	const tableBody = document.querySelector( selectors.tableBody );
+	if ( ! tableBody ) {
+		return;
+	}
+
+	const firstRow = tableBody.querySelector( 'tr' );
+	if ( ! firstRow ) {
+		return;
+	}
+
+	const baseWidths = Array.from( firstRow.children ).map( ( cell ) => cell.getBoundingClientRect().width );
+
+	const applyWidths = ( elements ) => {
+		elements.forEach( ( row ) => {
+			Array.from( row.children ).forEach( ( cell, index ) => {
+				const width = baseWidths[ index ];
+				if ( typeof width === 'undefined' ) {
+					return;
+				}
+				const styles = window.getComputedStyle( cell );
+				const padding =
+					parseFloat( styles.paddingLeft || '0' ) + parseFloat( styles.paddingRight || '0' );
+				cell.style.width = `${ Math.max( width - padding, 0 ) }px`;
+			} );
+		} );
+	};
+
+	applyWidths( Array.from( tableBody.querySelectorAll( 'tr' ) ) );
+
+	const table = tableBody.closest( '.wp-list-table' );
+	if ( table ) {
+		applyWidths( Array.from( table.querySelectorAll( 'thead tr, tfoot tr' ) ) );
+	}
+};
+
+const bindCheckAll = ( triggerSelector, targetWrapperSelector ) => {
+	const trigger = document.querySelector( triggerSelector );
+	const wrapper = document.querySelector( targetWrapperSelector );
+
+	if ( ! trigger || ! wrapper ) {
+		return;
+	}
+
+	trigger.addEventListener( 'change', () => {
+		const inputs = wrapper.querySelectorAll( 'input[type="checkbox"]' );
+		inputs.forEach( ( input ) => {
+			input.checked = trigger.checked;
+		} );
+	} );
+};
+
+const handleResetOrder = () => {
+	const resetButton = document.querySelector( '#reset-scp-order' );
+	const response = document.querySelector( '.scpo-reset-response' );
+
+	if ( ! resetButton || ! postOrderData ) {
+		return;
+	}
+
+	resetButton.addEventListener( 'click', ( event ) => {
+		event.preventDefault();
+
+		const checked = document.querySelectorAll( '.scpo-reset-order input[type="checkbox"]:checked' );
+		if ( checked.length === 0 ) {
+			if ( response ) {
+				response.textContent = 'Please select at least one post type.';
+			}
+			return;
+		}
+
+		const body = new URLSearchParams();
+		body.set( 'action', 'scpo_reset_order' );
+		body.set( 'scpo_security', postOrderData.resetNonce || '' );
+		checked.forEach( ( input ) => {
+			body.append( 'items[]', input.name );
+		} );
+
+		fetch( postOrderData.ajaxUrl, {
 			method: 'POST',
-			credentials: 'same-origin',
-			body: formData,
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body,
 		} )
-			.then( ( response ) => response.text() )
-			.then( () => {
-				// Order updated successfully
+			.then( ( res ) => res.json() )
+			.then( ( res ) => {
+				if ( response ) {
+					response.textContent = res?.data || res?.message || 'Done';
+				}
+				setTimeout( () => window.location.reload(), 1200 );
 			} )
 			.catch( () => {
-				// Error updating order
+				if ( response ) {
+					response.textContent = 'Reset failed.';
+				}
 			} );
-	}
-}
-
-// Initialize when DOM is ready
-if ( document.readyState === 'loading' ) {
-	document.addEventListener( 'DOMContentLoaded', () => {
-		new PostOrderDragDrop();
 	} );
-} else {
-	new PostOrderDragDrop();
-}
+};
+
+const initSettingsPage = () => {
+	bindCheckAll( '#scporder_allcheck_objects', '#scporder_select_objects' );
+	bindCheckAll( '#scporder_allcheck_tags', '#scporder_select_tags' );
+	handleResetOrder();
+};
+
+const initPostOrder = () => {
+	if ( ! postOrderData ) {
+		return;
+	}
+
+	if ( postOrderData.isSettingsPage ) {
+		initSettingsPage();
+	}
+
+	if ( postOrderData.isSortableScreen ) {
+		applyDragAndDrop();
+		window.addEventListener( 'load', fixTableWidths );
+	}
+};
+
+document.addEventListener( 'DOMContentLoaded', initPostOrder );

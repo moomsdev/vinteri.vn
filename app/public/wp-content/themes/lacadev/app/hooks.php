@@ -82,16 +82,21 @@ function app_render_featured_image_column($column, $postId) {
         return;
     }
     
+    // Generate nonce for CSRF protection
+    $nonce = wp_create_nonce('update_post_thumbnail');
+    $nonce_attr = esc_attr($nonce);
+    $post_id_attr = absint($postId);
+    
     $thumbnailUrl = get_the_post_thumbnail_url($postId, 'thumbnail');
     
     if ($thumbnailUrl) {
         // Has thumbnail - show image with remove button (same as Service)
         echo "<div style='position:relative;display:inline-block;'>";
-        echo "<a href='javascript:void(0)' data-trigger-change-thumbnail-id data-post-id='{$postId}'>";
+        echo "<a href='javascript:void(0)' data-trigger-change-thumbnail-id data-post-id='{$post_id_attr}' data-nonce='{$nonce_attr}'>";
         echo "<img src='" . esc_url($thumbnailUrl) . "' style='max-width:80px;max-height:80px;display:block;' alt='Thumbnail'/>";
         echo "</a>";
         // Remove button (X)
-        echo "<a class='remove-thumbnail' href='javascript:void(0)' data-trigger-remove-thumbnail data-post-id='{$postId}' title='Remove thumbnail'>
+        echo "<a class='remove-thumbnail' href='javascript:void(0)' data-trigger-remove-thumbnail data-post-id='{$post_id_attr}' data-nonce='{$nonce_attr}' title='Remove thumbnail'>
                 <svg viewBox='0 0 12 12'>
                     <path d='M11 1L1 11M1 1l10 10' stroke='currentColor' stroke-width='2' stroke-linecap='round'/>
                 </svg>
@@ -99,7 +104,7 @@ function app_render_featured_image_column($column, $postId) {
         echo "</div>";
     } else {
         // No thumbnail - show WordPress-style "Set featured image" link (same as Service)
-        echo "<a href='javascript:void(0)' data-trigger-change-thumbnail-id data-post-id='{$postId}'";
+        echo "<a href='javascript:void(0)' data-trigger-change-thumbnail-id data-post-id='{$post_id_attr}' data-nonce='{$nonce_attr}'>";
         echo "<div class='no-image-text'>Choose image</div>";
         echo "</a>";
     }
